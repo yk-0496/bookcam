@@ -1,11 +1,12 @@
 import React from 'react';
-import { View , Text } from 'react-native';
+import { View , Text, Modal, ScrollView, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 
 import styles from './styles';
 import Toolbar from './toolbar.component';
 import Gallery from './gallery.component'
+import Shelves from './shelves.component';
 
 export default class CameraPage extends React.Component {
     camera = null;
@@ -16,6 +17,8 @@ export default class CameraPage extends React.Component {
         capturing: null,
         cameraType: Camera.Constants.Type.back,
         hasCameraPermission: null,
+        showShelvesPopup: true,
+        cameraOn : true,
         //playsounds: Camera.Constants.playSoundOnCapture
     };
     
@@ -45,9 +48,9 @@ export default class CameraPage extends React.Component {
         this.setState({ hasCameraPermission });
 
     };
-    
+
     render() {
-        const { hasCameraPermission , flashMode, cameraType, capturing, captures } = this.state;
+        const { hasCameraPermission , flashMode, cameraType, capturing, captures, cameraOn, showShelvesPopup} = this.state;
 
         if (hasCameraPermission === null) {
             return <View />;
@@ -59,26 +62,48 @@ export default class CameraPage extends React.Component {
         return (
             <React.Fragment>
                 <View>
+                    { cameraOn ? (
                     <Camera 
                         type={cameraType}
                         flashMode={flashMode}
                         style = {styles.preview}
                         ref ={camera => {this.camera = camera}}
-                        cpatureAudio={false}
-                    />
+                    /> ) : ( <Shelves /> ) }
+
+                    <Modal transparent={true} visible={this.state.showShelvesPopup}>
+                        <View style={styles.popupContainer}>
+                            <Text style={styles.popupTitle}>
+                                어떤 책??
+                            </Text>
+                            <ScrollView /*contentContainerStyles={styles.popupBookList} */>
+                                <TouchableOpacity style = {styles.popupBookList} onPress={() => this.setState({ showShelvesPopup: false })}>
+                                <Text> list </Text> 
+                                </TouchableOpacity> 
+                            </ScrollView>
+                            <TouchableOpacity onPress={() => {this.setState({ cameraOn : false }) ; this.setState({showShelvesPopup : false });}}>
+                                <Text style={styles.toshelves}>
+                                    책장으로 가기
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Modal>
                 </View>
-                {captures.length > 0 && <Gallery captures={captures}/>}
+                {captures.length > 0 && <Gallery captures={captures}/>} 
+                
+                { cameraOn &&
                 <Toolbar 
-                    capturing={capturing}
-                    flashMode={flashMode}
-                    cameraType={cameraType}
-                    setFlashMode={this.setFlashMode}
-                    setCameraType={this.setCameraType}
-                    onCaptureIn={this.handleCaptureIn}
-                    onCaptureOut={this.handleCaptureOut}
-                    onLongCapture={this.handleLongCapture}
-                    onShortCapture={this.handleShortCapture}
-                    />
+                capturing={capturing}
+                flashMode={flashMode}
+                cameraType={cameraType}
+                setFlashMode={this.setFlashMode}
+                setCameraType={this.setCameraType}
+                onCaptureIn={this.handleCaptureIn}
+                onCaptureOut={this.handleCaptureOut}
+                onLongCapture={this.handleLongCapture}
+                onShortCapture={this.handleShortCapture}
+                />}
+
+                
             </React.Fragment>
         );
     };
