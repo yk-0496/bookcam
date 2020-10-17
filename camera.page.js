@@ -4,13 +4,38 @@ import { Camera } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 
 import styles from './styles';
+import Toolbar from './toolbar.component';
+import Gallery from './gallery.component'
 
 export default class CameraPage extends React.Component {
     camera = null;
 
     state = {
+        captures: [],
+        flashMode: Camera.Constants.FlashMode.off,
+        capturing: null,
+        cameraType: Camera.Constants.Type.back,
         hasCameraPermission: null,
+        //playsounds: Camera.Constants.playSoundOnCapture
     };
+    
+    setFlashMode = (flashMode) => this.setState({ flashMode });
+    setCameraType = (cameraType) => this.setState({ cameraType });
+    handleCaptureIn = () => this.setState({ capturing: true });
+
+    handleCaptureOut = () => {
+        if (this.state.capturing)
+            this.camera.stopRecording();
+    };
+    handleShortCapture = async () => {
+        const photoData = await this.camera.takePictureAsync();
+        this.setState({ capturing: false, captures: [photoData, ...this.state.captures] })
+    };
+    handleLongCapture = async () => {
+        const videoData = await this.camera.recordAsync();
+        this.setState({ capturing: false, captures: [videoData, ...this.state.captures] });
+    };
+    
     
     async componentDidMount() {
         const camera = await Permissions.askAsync(Permissions.CAMERA);
@@ -22,7 +47,7 @@ export default class CameraPage extends React.Component {
     };
     
     render() {
-        const { hasCameraPermission } = this.state;
+        const { hasCameraPermission , flashMode, cameraType, capturing, captures } = this.state;
 
         if (hasCameraPermission === null) {
             return <View />;
@@ -32,12 +57,29 @@ export default class CameraPage extends React.Component {
         }
 
         return (
-            <View>
-                <Camera 
-                    style = {styles.preview}
-                    ref ={camera => {this.camera = camera}}
-                />
-            </View>
+            <React.Fragment>
+                <View>
+                    <Camera 
+                        type={cameraType}
+                        flashMode={flashMode}
+                        style = {styles.preview}
+                        ref ={camera => {this.camera = camera}}
+                        cpatureAudio={false}
+                    />
+                </View>
+                {captures.length > 0 && <Gallery captures={captures}/>}
+                <Toolbar 
+                    capturing={capturing}
+                    flashMode={flashMode}
+                    cameraType={cameraType}
+                    setFlashMode={this.setFlashMode}
+                    setCameraType={this.setCameraType}
+                    onCaptureIn={this.handleCaptureIn}
+                    onCaptureOut={this.handleCaptureOut}
+                    onLongCapture={this.handleLongCapture}
+                    onShortCapture={this.handleShortCapture}
+                    />
+            </React.Fragment>
         );
     };
 
