@@ -57,7 +57,7 @@ export default class Current extends React.Component{
                     <Text style={styles.shelveTitle}>
                         책장 이름
                     </Text>
-                    <View style={styles.shelves}>
+                    <View /*style={styles.shelves}*/>
                     <TouchableOpacity onPress={() => this.setState({isEditing: true})} >
                         <Text style={styles.addBook}>책 추가하기</Text>
                     </TouchableOpacity>
@@ -85,6 +85,7 @@ export default class Current extends React.Component{
                             deleteBook = {this._deleteBook}
                             {...book}
                             />
+                            
                         ))}
                         
                         

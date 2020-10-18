@@ -7,23 +7,26 @@ import PrevBookList from "./prevshelves.component"
 import Shelves from './shelves.component';
 import Current from "./Current"
 import CameraPage from './camera.page';
+import Book from './Books';
 
 class Application extends React.Component {
   render() {
     return(
-      <CameraPage />
+      <Current />
     );
   };
 };
 
 const AppNavigator = createStackNavigator(
   {
-  Cam: CameraPage,
   Current: Current,
+  Cam: CameraPage,
+  Book: Book,
   Previous: PrevBookList,
+
   },
   {
-  initialRootName: 'Cam',
+  initialRootName: 'Current',
   },
 
 );

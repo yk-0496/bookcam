@@ -92,27 +92,8 @@ export default class CameraPage extends React.Component {
                         style = {styles.preview}
                         ref ={camera => {this.camera = camera}}
                     /> 
-                    { showShelvesPopup  && <Modal transparent={true} visible={true}>
-                        <View style={styles.popupContainer}>
-                            <Text style={styles.popupTitle}>
-                                어떤 책??
-                            </Text>
 
-                            <ScrollView /*contentContainerStyles={styles.popupBookList} */>
-                                <TouchableOpacity style = {styles.popupBookList} onPress={() => this.setState({ showShelvesPopup : false })}>
-                                <Text> list  </Text> 
 
-                                </TouchableOpacity> 
-                            </ScrollView>
-                            
-                            
-                            <Button
-                            title = '책장으로 가기'
-                            color="#bbb"
-                            onPress={() =>  {this.props.navigation.navigate('Current'); this.setState({ showShelvesPopup : false})}}
-                            />
-                        </View>
-                    </Modal> }
                 </View>
 
                 {captures.length > 0 && <Gallery captures={captures}/>} 

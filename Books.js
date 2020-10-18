@@ -1,17 +1,31 @@
 import React, {Component} from "react";
-import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput,event} from "react-native"
+import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput,event, Button, Modal} from "react-native"
 import PropTypes from "prop-types";
-import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
+//import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 //import styles from "./styles";
 //import styles from "../../bookcam/styles";
+import { createAppContainer } from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+import { Camera } from "expo-camera";
+import CameraPage from "./camera.page";
 
 const { width, height} = Dimensions.get("window")
 
 export default class Book extends Component{
+    static navigationOptions = ({navigation}) => {
+        return {
+            headerTitle: null,
+            headerTransparent: true,
+        }};
+
     constructor(props) {
         super(props);
         this.state = { isEditing: false, bookValue: props.text};
     }
+    state = {
+        isTakingPic : false
+    }
+
     static propTypes = {
         text: PropTypes.string.isRequired,
         id : PropTypes.string.isRequired,
@@ -24,10 +38,13 @@ export default class Book extends Component{
     
 
     render() {
-        const {isEditing, bookValue} = this.state;
+        const {isEditing, bookValue, isTakingPic } = this.state;
         const { text, id ,deleteBook,isCompleted} = this.props;
         return(
-            <View style={styles.container}>
+
+            <View>
+                {!isTakingPic ? (
+                <View style={styles.container}>
                 <View style={styles.column}>
                     <Text> {text} </Text>
                     <TouchableOpacity onPressOut ={(event)=> {
@@ -36,11 +53,13 @@ export default class Book extends Component{
                         <View>
                             <Text> XXXX </Text>
                         </View>
-                    
                     </TouchableOpacity>
-                        
-                    
-                </View>
+                    <TouchableOpacity onPress={() => this.setState({ isTakingPic : true})} >
+                        <Text> Camera </Text>
+                    </TouchableOpacity>
+                    </View>
+                    </View>
+                    ): (<Modal><CameraPage /></Modal>)}
             </View>
         )
      }
