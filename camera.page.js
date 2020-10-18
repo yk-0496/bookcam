@@ -1,5 +1,5 @@
 import React from 'react';
-import { View , Text, Modal, ScrollView, TouchableOpacity } from 'react-native';
+import { View , Text, Modal, ScrollView, TouchableOpacity, Button } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 
@@ -7,6 +7,12 @@ import styles from './styles';
 import Toolbar from './toolbar.component';
 import Gallery from './gallery.component'
 import Shelves from './shelves.component';
+
+import PrevBookList from "./prevshelves.component";
+import Current from "./Current";
+import { createAppContainer } from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+
 
 export default class CameraPage extends React.Component {
     camera = null;
@@ -17,8 +23,7 @@ export default class CameraPage extends React.Component {
         capturing: null,
         cameraType: Camera.Constants.Type.back,
         hasCameraPermission: null,
-        showShelvesPopup: true,
-        cameraOn : true,
+        showShelvesPopup : true,
         //playsounds: Camera.Constants.playSoundOnCapture
     };
     
@@ -48,9 +53,22 @@ export default class CameraPage extends React.Component {
         this.setState({ hasCameraPermission });
 
     };
+    
+    static navigationOptions = ({navigation}) => {
+        return {
+            headerTitle: null,
+            headerTransparent: true,
+            headerRight: (
+                <Button
+                color="#ff5c5c"
+                title='책장'
+                onPress={() => navigation.navigate("Current")}/>
+            )
+        }
+    }
 
     render() {
-        const { hasCameraPermission , flashMode, cameraType, capturing, captures, cameraOn, showShelvesPopup} = this.state;
+        const { hasCameraPermission , flashMode, cameraType, capturing, captures, showShelvesPopup } = this.state;
 
         if (hasCameraPermission === null) {
             return <View />;
@@ -58,39 +76,38 @@ export default class CameraPage extends React.Component {
             return <Text> Access to camera has been denied</Text>;
 
         }
-
+        
         return (
             <React.Fragment>
                 <View>
-                    { cameraOn ? (
                     <Camera 
                         type={cameraType}
                         flashMode={flashMode}
                         style = {styles.preview}
                         ref ={camera => {this.camera = camera}}
-                    /> ) : ( <Shelves /> ) }
-
-                    <Modal transparent={true} visible={this.state.showShelvesPopup}>
+                    /> 
+                    { showShelvesPopup  && <Modal transparent={true} visible={true}>
                         <View style={styles.popupContainer}>
                             <Text style={styles.popupTitle}>
                                 어떤 책??
                             </Text>
                             <ScrollView /*contentContainerStyles={styles.popupBookList} */>
-                                <TouchableOpacity style = {styles.popupBookList} onPress={() => this.setState({ showShelvesPopup: false })}>
+                                <TouchableOpacity style = {styles.popupBookList} onPress={() => this.setState({ showShelvesPopup : false })}>
                                 <Text> list </Text> 
                                 </TouchableOpacity> 
                             </ScrollView>
-                            <TouchableOpacity onPress={() => {this.setState({ cameraOn : false }) ; this.setState({showShelvesPopup : false });}}>
-                                <Text style={styles.toshelves}>
-                                    책장으로 가기
-                                </Text>
-                            </TouchableOpacity>
+                            
+                            <Button
+                            title = '책장으로 가기'
+                            color="#bbb"
+                            onPress={() =>  {this.props.navigation.navigate('Current'); this.setState({ showShelvesPopup : false})}}
+                            />
                         </View>
-                    </Modal>
+                    </Modal> }
                 </View>
+
                 {captures.length > 0 && <Gallery captures={captures}/>} 
                 
-                { cameraOn &&
                 <Toolbar 
                 capturing={capturing}
                 flashMode={flashMode}
@@ -101,7 +118,7 @@ export default class CameraPage extends React.Component {
                 onCaptureOut={this.handleCaptureOut}
                 onLongCapture={this.handleLongCapture}
                 onShortCapture={this.handleShortCapture}
-                />}
+                />
 
                 
             </React.Fragment>
@@ -109,3 +126,6 @@ export default class CameraPage extends React.Component {
     };
 
 };
+
+
+

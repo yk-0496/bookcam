@@ -122,13 +122,13 @@ export default StyleSheet.create({
         backgroundColor: "#bbb",
         fontSize:30,
         fontWeight: "400",
-        marginTop: 50,
+        marginTop: 65,
     },
     shelves: {
         backgroundColor: "#FFFFFF",
-        marginTop:30,
+        marginTop:15,
         flex:1,
-        width: winWidth - 50,
+        width: winWidth,
         marginBottom:20,
     },
     toPrevShelves: {
@@ -141,7 +141,8 @@ export default StyleSheet.create({
         backgroundColor: "brown",
         width : winWidth,
         height: winHeight,
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 30
     },
     prevShelve: {
         backgroundColor: "#FFFFFF",
@@ -150,6 +151,27 @@ export default StyleSheet.create({
         width: winWidth - 50,
         marginBottom:20,
     },
+    bt_Toshelve: {
+        fontSize:20,
+        color: "black"
+    },
+    addBook: {
+        marginTop:15,
+        alignSelf:'flex-start',
+        marginLeft:15,
+        marginBottom:15,
+        fontSize:15,
+        backgroundColor: "#bbb"
+    },
+    listEditing: {
+        backgroundColor: "#bbb",
+        alignItems: 'center',
+        marginTop:120,
+        alignSelf:'center',
+        flex:1,
+        marginBottom:60,
+        width: winWidth-50,
 
+    }
     
 });
