@@ -1,12 +1,15 @@
 import React, {Component} from "react";
 import {View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, TextInput,event, Button, AsyncStorage, createdAt} from "react-native";
+import { AppLoading } from "expo";
 
 import PropTypes from "prop-types";
 import styles from "./styles";
 import PrevBookList from "./prevshelves.component"
-import CameraPage from './camera.page';
+//import CameraPage from './camera.page';
 import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
+import Book from "./Books";
+
 
 import uuid from 'react-native-uuid';
 //import { v1 as uuidv1 } from 'uuid';
@@ -19,28 +22,35 @@ export default class Current extends React.Component{
             headerTitle: null,
             headerTransparent: true,
         }
-    }
-
+    };
+    
     state = { 
         newBook: "",
-        Books: {}
+        loadedBooks : false,
+        Books: {},
+        isEditing: false
      };
      
 
-    constructor(props) {
-        super(props);
-        this.state = { isEditing: false, newBookValue: props.text };
-    }
+    componentDidMount = () => {
+        this._loadBooks();
+        
+    };
+
 
     /*static propTypes = {
         text: PropTypes.string.isRequired,
       }*/
 
         render() {
-            const { newBook, Books, isEditing } = this.state;
+            const { Books, newBook , isEditing, loadedBooks } = this.state;
             //const {text} = this.props
             //const { isEditing } = this.props;
             //console.log(text)
+           // if (!loadedBooks) {
+             //   return <Apploading />;
+            //}
+
             return(
 
                 <View style={styles.shelveContainer}>
@@ -65,9 +75,19 @@ export default class Current extends React.Component{
                         </View>
                         </Modal> }
                     <ScrollView>
-                        <Text> 1 </Text>
-                        <Text> 2 </Text>
-                        <Text> 3 </Text>
+                        {Object.values(Books)
+                        .map(book => (
+                            <Book
+                            key={book.id}
+                            uncompleteBook = {this._uncompleteBook}
+                            completeBook = {this._completeBook}
+                            updateBook = {this._updateBooks}
+                            deleteBook = {this._deleteBook}
+                            {...book}
+                            />
+                        ))}
+                        
+                        
                     </ScrollView>
                     </View>
                     <Button 
@@ -75,7 +95,10 @@ export default class Current extends React.Component{
                     onPress = {() => this.props.navigation.navigate('Previous')}/>
                 </View>
             )
-        }
+
+        
+
+            }
     
 
     /*addBook=() => {
@@ -84,10 +107,32 @@ export default class Current extends React.Component{
             isEditing : true
         });
     },*/
+
+
+
+
     _controlNewBook = text => {
         this.setState({
             newBook: text,
         });
+    };
+
+    _loadBooks = async () => {
+        try {
+            const Books = await AsyncStorage.getItem("Books");
+            const parsedBooks = JSON.parse(Books);
+            //console.log(Books);
+            this.setState({ loadedBooks : true , Books : parsedBooks || {} });
+            //console.log(typeof Books)
+            //console.log({Books})
+            //console.log(Object.values(parsedBooks))
+           // console.log(typeof Books, typeof parsedBooks)
+           console.log("Book"+Books)
+
+
+        } catch(err) {
+            console.log(err)
+        }
     };
 
     _addNewBook = () => {
@@ -117,11 +162,70 @@ export default class Current extends React.Component{
         }
         
     };
+    _uncompleteBook = (id) => {
+        this.setState(prevState => {
+            const newState ={
+                ...prevState,
+                Books: {
+                    ...prevState.Books,
+                [id] : {
+                    ...prevState.Books[id],
+                    isCompleted: false
+                }
+            }
+        }
+        this._saveBooks(newState.Books);
+        return { ...newState};
+        })
+    };
+    _deleteBook = (id) => {
+        this.setState(prevState => {
+            const Books = prevState.Books;
+            delete Books[id];
+            const newState = {
+                ...prevState,
+                ...Books
+            };
+            this._saveBooks(newState.Books);
+            return {...newState}
+        });
+    }
+    _completeBook = (id) => {
+        this.setState(prevState => {
+            const newState = {
+                ...prevState,
+                Books: {
+                    ...prevState.Books,
+                [id]: {
+                    ...prevStete.Books[id],
+                    isCompleted: true
+                }
+                }
+            };
+            this._saveBooks(newState.Books);
+            return { ...newState};
+        })
+    };
+    _updateBooks = (id,text) => {
+        this.setState(prevState => {
+            const newState = {
+                Books: {
+                    ...prevState.Books,
+                [id]: {
+                    ...prevState.Books[id],
+                    text: text
+                }
+                }
+            };
+            this._saveBooks(newState.Books);
+            return {...newState};
+        })
+    }
 
-    _saveBooks = (newBooks,Books) => {
+    _saveBooks = newBooks => {
         const saveBooks = AsyncStorage.setItem("Books", JSON.stringify(newBooks));
         //console.log(JSON.stringify(newBooks))
-        console.log(Books)
+        //console.log(Books)
     }
 
 }

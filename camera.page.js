@@ -2,6 +2,7 @@ import React from 'react';
 import { View , Text, Modal, ScrollView, TouchableOpacity, Button } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
+import PropTypes from "prop-types";
 
 import styles from './styles';
 import Toolbar from './toolbar.component';
@@ -12,10 +13,15 @@ import PrevBookList from "./prevshelves.component";
 import Current from "./Current";
 import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
+import Book from './Books';
 
 
 export default class CameraPage extends React.Component {
     camera = null;
+
+  /*  static propTypes = {
+        list: PropTypes.string.isRequired
+    }*/
 
     state = {
         captures: [],
@@ -69,14 +75,14 @@ export default class CameraPage extends React.Component {
 
     render() {
         const { hasCameraPermission , flashMode, cameraType, capturing, captures, showShelvesPopup } = this.state;
-
+        const { Books } = this.props;
         if (hasCameraPermission === null) {
             return <View />;
         } else if (hasCameraPermission === false ) {
             return <Text> Access to camera has been denied</Text>;
 
         }
-        
+
         return (
             <React.Fragment>
                 <View>
@@ -91,11 +97,14 @@ export default class CameraPage extends React.Component {
                             <Text style={styles.popupTitle}>
                                 어떤 책??
                             </Text>
+
                             <ScrollView /*contentContainerStyles={styles.popupBookList} */>
                                 <TouchableOpacity style = {styles.popupBookList} onPress={() => this.setState({ showShelvesPopup : false })}>
-                                <Text> list </Text> 
+                                <Text> list  </Text> 
+
                                 </TouchableOpacity> 
                             </ScrollView>
+                            
                             
                             <Button
                             title = '책장으로 가기'
