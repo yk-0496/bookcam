@@ -5,7 +5,7 @@ import { AppLoading } from "expo";
 import PropTypes from "prop-types";
 import styles from "./styles";
 import PrevBookList from "./prevshelves.component"
-//import CameraPage from './camera.page';
+import CameraPage from './camera.page';
 import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import Book from "./Books";
@@ -16,7 +16,7 @@ import uuid from 'react-native-uuid';
 
 const { width, height} = Dimensions.get("window")
 
-export default class Current extends React.Component{     
+export default class Current extends React.Component {     
     static navigationOptions = ({navigation}) => {
         return {
             headerTitle: null,
@@ -42,7 +42,7 @@ export default class Current extends React.Component{
         text: PropTypes.string.isRequired,
       }*/
 
-        render() {
+      render() {
             const { Books, newBook , isEditing, loadedBooks } = this.state;
             //const {text} = this.props
             //const { isEditing } = this.props;
@@ -57,7 +57,7 @@ export default class Current extends React.Component{
                     <Text style={styles.shelveTitle}>
                         책장 이름
                     </Text>
-                    <View /*style={styles.shelves}*/>
+                    <View style={styles.shelves}>
                     <TouchableOpacity onPress={() => this.setState({isEditing: true})} >
                         <Text style={styles.addBook}>책 추가하기</Text>
                     </TouchableOpacity>
@@ -85,6 +85,7 @@ export default class Current extends React.Component{
                             deleteBook = {this._deleteBook}
                             {...book}
                             />
+                            
                             
                         ))}
                         

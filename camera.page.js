@@ -13,11 +13,15 @@ import PrevBookList from "./prevshelves.component";
 import Current from "./Current";
 import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
+
 import Book from './Books';
 
 
 export default class CameraPage extends React.Component {
+
+
     camera = null;
+
 
   /*  static propTypes = {
         list: PropTypes.string.isRequired
@@ -30,8 +34,16 @@ export default class CameraPage extends React.Component {
         cameraType: Camera.Constants.Type.back,
         hasCameraPermission: null,
         showShelvesPopup : true,
+        galleryOn : false,
         //playsounds: Camera.Constants.playSoundOnCapture
     };
+
+    static propTypes = {
+
+        id : PropTypes.string.isRequired,
+        //isTakingPic : PropTypes.bool.isRequired,
+
+    }
     
     setFlashMode = (flashMode) => this.setState({ flashMode });
     setCameraType = (cameraType) => this.setState({ cameraType });
@@ -43,7 +55,8 @@ export default class CameraPage extends React.Component {
     };
     handleShortCapture = async () => {
         const photoData = await this.camera.takePictureAsync();
-        this.setState({ capturing: false, captures: [photoData, ...this.state.captures] })
+        this.setState({ capturing: false, captures: [photoData, ...this.state.captures]})
+       // this.props.TakingPic()
     };
     handleLongCapture = async () => {
         const videoData = await this.camera.recordAsync();
@@ -74,16 +87,21 @@ export default class CameraPage extends React.Component {
     }
 
     render() {
-        const { hasCameraPermission , flashMode, cameraType, capturing, captures, showShelvesPopup } = this.state;
-        const { Books } = this.props;
+    
+        const { hasCameraPermission , flashMode, cameraType, capturing, captures, showShelvesPopup, isTakingPic, galleryOn } = this.state;
+        const { id } = this.props;
+        //const { Books } = this.props;
+        
         if (hasCameraPermission === null) {
             return <View />;
         } else if (hasCameraPermission === false ) {
             return <Text> Access to camera has been denied</Text>;
 
         }
+        console.log(id)
 
         return (
+
             <React.Fragment>
                 <View>
                     <Camera 
@@ -92,11 +110,10 @@ export default class CameraPage extends React.Component {
                         style = {styles.preview}
                         ref ={camera => {this.camera = camera}}
                     /> 
-
-
                 </View>
-
-                {captures.length > 0 && <Gallery captures={captures}/>} 
+                <TouchableOpacity onPress = {() => {captures.length > 0 && this.setState({ galleryOn : true })}} >
+                <Text style={styles.togallary}> 앨범으로 가기 </Text>
+                </TouchableOpacity>                
                 
                 <Toolbar 
                 capturing={capturing}
@@ -109,8 +126,11 @@ export default class CameraPage extends React.Component {
                 onLongCapture={this.handleLongCapture}
                 onShortCapture={this.handleShortCapture}
                 />
-
                 
+                { galleryOn && 
+                <Gallery captures={captures}/>}
+
+
             </React.Fragment>
         );
     };

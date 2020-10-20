@@ -19,14 +19,16 @@ class Application extends React.Component {
 
 const AppNavigator = createStackNavigator(
   {
+ 
   Current: Current,
   Cam: CameraPage,
   Book: Book,
+ 
   Previous: PrevBookList,
 
   },
   {
-  initialRootName: 'Current',
+  initialRootName: 'Cam',
   },
 
 );

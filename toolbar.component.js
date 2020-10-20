@@ -14,7 +14,9 @@ export default({
     flashMode = CameraFlashModes.off,
     setFlashMode, setCameraType,
     onCaptureIn, onCaptureOut, onLongCapture, onShortCapture,
+
 }) => (
+    
     <Grid style = {styles.bottomToolbar}>
         <Row>
             <Col style = {styles.alignCenter}>

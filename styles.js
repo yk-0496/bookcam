@@ -44,7 +44,10 @@ export default StyleSheet.create({
         borderColor: "transparent",
     },
     galleryContainer: {
-        bottom: 100
+        width: winWidth,
+        height: winHeight,
+        //bottom: 100,
+        backgroundColor:"#bbb"
     },
     galleryImageContainer: {
         width: 75,
@@ -172,6 +175,10 @@ export default StyleSheet.create({
         marginBottom:60,
         width: winWidth-50,
 
+    },
+    togallary: {
+        fontSize: 20,
+        marginTop:20
     }
     
 });

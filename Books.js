@@ -1,17 +1,19 @@
 import React, {Component} from "react";
-import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput,event, Button, Modal} from "react-native"
+import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput,event, Button, Modal } from "react-native"
 import PropTypes from "prop-types";
 //import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 //import styles from "./styles";
 //import styles from "../../bookcam/styles";
+
 import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
+
 import { Camera } from "expo-camera";
 import CameraPage from "./camera.page";
 
 const { width, height} = Dimensions.get("window")
 
-export default class Book extends Component{
+export default class Book extends React.Component{
     static navigationOptions = ({navigation}) => {
         return {
             headerTitle: null,
@@ -36,10 +38,14 @@ export default class Book extends Component{
         updateBook : PropTypes.func.isRequired
     }
     
+    _TakingPic =() => {
+        this.setState({isTakingPic:false})
+    };
 
-    render() {
+    render(){
         const {isEditing, bookValue, isTakingPic } = this.state;
         const { text, id ,deleteBook,isCompleted} = this.props;
+
         return(
 
             <View>
@@ -59,10 +65,11 @@ export default class Book extends Component{
                     </TouchableOpacity>
                     </View>
                     </View>
-                    ): (<Modal><CameraPage /></Modal>)}
+                    ): (<Modal><CameraPage TakingPic = {this._TakingPic} isTakingPic={this.state.isTakingPic} /></Modal>)}
             </View>
+
         )
-     }
+     
      _togglecompleted = (event) => {
         event.stopPropagation()
     
@@ -86,7 +93,7 @@ export default class Book extends Component{
             isEditing : false
         });
     }
-}
+}}
 
 
 const styles = StyleSheet.create({
