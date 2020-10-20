@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 
 import styles from './styles';
 import Toolbar from './toolbar.component';
-import Gallery from './gallery.component'
+import Gallery from './gallery.component';
 import Shelves from './shelves.component';
 
 import PrevBookList from "./prevshelves.component";
@@ -39,11 +39,11 @@ export default class CameraPage extends React.Component {
     };
 
     static propTypes = {
-
-        id : PropTypes.string.isRequired,
-        //isTakingPic : PropTypes.bool.isRequired,
-
+        id2 : PropTypes.string.isRequired,
+        updatePic : PropTypes.func.isRequired,
+                //isTakingPic : PropTypes.bool.isRequired,
     }
+
     
     setFlashMode = (flashMode) => this.setState({ flashMode });
     setCameraType = (cameraType) => this.setState({ cameraType });
@@ -54,9 +54,11 @@ export default class CameraPage extends React.Component {
             this.camera.stopRecording();
     };
     handleShortCapture = async () => {
+        const { updatePic, id2 } = this.props;
         const photoData = await this.camera.takePictureAsync();
-        this.setState({ capturing: false, captures: [photoData, ...this.state.captures]})
-       // this.props.TakingPic()
+        this.setState({ capturing: false /*, captures: [photoData, ...this.state.captures]*/})
+        updatePic( id2 , photoData)
+        this.props.TakingPic()
     };
     handleLongCapture = async () => {
         const videoData = await this.camera.recordAsync();

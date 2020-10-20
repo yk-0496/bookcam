@@ -83,12 +83,12 @@ export default class Current extends React.Component {
                             completeBook = {this._completeBook}
                             updateBook = {this._updateBooks}
                             deleteBook = {this._deleteBook}
+                            updatePic = {this._updatePic}
+                            navigation = {this.props.navigation}
+                            book = {book}
                             {...book}
-                            />
-                            
-                            
+                            />                            
                         ))}
-                        
                         
                     </ScrollView>
                     </View>
@@ -129,7 +129,7 @@ export default class Current extends React.Component {
             //console.log({Books})
             //console.log(Object.values(parsedBooks))
            // console.log(typeof Books, typeof parsedBooks)
-           console.log("Book"+Books)
+           //console.log("Book"+Books)
 
 
         } catch(err) {
@@ -147,8 +147,10 @@ export default class Current extends React.Component {
                         id: ID,
                         text: newBook,
                         createdAt : Date.now(),
+                        captures : [ ],
                     }
                 };
+                //console.log(newBookObject.id)
                 const newState ={
                     ...prevState,
                     newBook: "",
@@ -211,11 +213,28 @@ export default class Current extends React.Component {
     _updateBooks = (id,text) => {
         this.setState(prevState => {
             const newState = {
+                ...prevState,
                 Books: {
                     ...prevState.Books,
                 [id]: {
                     ...prevState.Books[id],
                     text: text
+                }
+                }
+            };
+            this._saveBooks(newState.Books);
+            return {...newState};
+        })
+    };
+    _updatePic = (id,photoData) => {
+        this.setState(prevState => {
+            const newState = {
+                Books : {
+                    ...prevState.Books,
+                [id]: {
+                    ...prevState.Books[id],
+                    captures : [photoData, ...prevState.Books[id].captures]
+                
                 }
                 }
             };

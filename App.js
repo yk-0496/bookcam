@@ -8,6 +8,7 @@ import Shelves from './shelves.component';
 import Current from "./Current"
 import CameraPage from './camera.page';
 import Book from './Books';
+import Gallery from './gallery.component';
 
 class Application extends React.Component {
   render() {
@@ -23,7 +24,7 @@ const AppNavigator = createStackNavigator(
   Current: Current,
   Cam: CameraPage,
   Book: Book,
- 
+  Gallery : Gallery,
   Previous: PrevBookList,
 
   },

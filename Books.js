@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput,event, Button, Modal } from "react-native"
+import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput,event, Button, Modal, ShadowPropTypesIOS } from "react-native"
 import PropTypes from "prop-types";
 //import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 //import styles from "./styles";
@@ -35,24 +35,30 @@ export default class Book extends React.Component{
         uncompleteBook: PropTypes.func.isRequired,
         completeBook: PropTypes.func.isRequired,
         deleteBook : PropTypes.func.isRequired,
-        updateBook : PropTypes.func.isRequired
+        updateBook : PropTypes.func.isRequired,
+        gal_captures : PropTypes.array.isRequired,
+    
     }
     
     _TakingPic =() => {
         this.setState({isTakingPic:false})
+        //console.log(this.props.key)
+        //console.log(id)
     };
 
     render(){
+        const {navigation} = this.props.navigation;
         const {isEditing, bookValue, isTakingPic } = this.state;
-        const { text, id ,deleteBook,isCompleted} = this.props;
-
+        const { text, id ,deleteBook,isCompleted , gal_captures} = this.props;
+        console.log(this.props.book.captures)
         return(
-
             <View>
                 {!isTakingPic ? (
                 <View style={styles.container}>
                 <View style={styles.column}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Gallery', { passed_captures : this.props.book.captures })}>
                     <Text> {text} </Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPressOut ={(event)=> {
                         event.stopPropagation;
                         deleteBook(id)}}>
@@ -65,7 +71,15 @@ export default class Book extends React.Component{
                     </TouchableOpacity>
                     </View>
                     </View>
-                    ): (<Modal><CameraPage TakingPic = {this._TakingPic} isTakingPic={this.state.isTakingPic} /></Modal>)}
+                    ): (
+                    <Modal>
+                        <CameraPage 
+                        TakingPic = {this._TakingPic} 
+                        isTakingPic={this.state.isTakingPic} 
+                        updatePic={this.props.updatePic}
+                        id2={this.props.id} />
+                        </Modal>)}
+                
             </View>
 
         )
@@ -103,12 +117,15 @@ const styles = StyleSheet.create({
         borderBottomWidth: StyleSheet.hairlineWidth,
         flexDirection : "row",
         alignItems:"center",
-        justifyContent : "space-between"
+        justifyContent : "space-between",
+        fontSize:20
+        
     },
     column: {
         flexDirection:"row",
         alignItems:"center",
         width: width /2,
+        height:40,
     },
     circle: {
         width:30,
@@ -123,4 +140,6 @@ const styles = StyleSheet.create({
     uncompletedCircle:{
         borderColor:"#F23657"
     }, 
-})
+});
+
+

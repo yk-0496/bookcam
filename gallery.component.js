@@ -1,9 +1,17 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { View, Image, ScrollView } from 'react-native';
-
+import PropTypes from "prop-types";
 import styles from './styles';
 
-export default ({captures = []}) => (
+import { createAppContainer } from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+
+export default class Gallery extends Component{
+    render(){
+    const { navigation } = this.props;
+    const captures = navigation.getParam("passed_captures")
+    console.log(captures)
+    return(
     <ScrollView
         horizontal={true}
         style={ styles.galleryContainer}
@@ -14,4 +22,5 @@ export default ({captures = []}) => (
                 </View>
             ))}
         </ScrollView>
-);
+    )
+}};
