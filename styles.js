@@ -50,13 +50,13 @@ export default StyleSheet.create({
         backgroundColor:"#bbb"
     },
     galleryImageContainer: {
-        width: 75,
-        height: 75,
-        marginRight: 5
+        width: winWidth,
+        height: winHeight,
+       // marginRight: 5
     },
     galleryImage: {
-        width:75,
-        height:75
+        width:winWidth,
+        height:winHeight,
     },
     popupContainer: {
         //backgroundColor: "rgb(225, 197, 47)",

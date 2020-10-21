@@ -58,7 +58,6 @@ export default class CameraPage extends React.Component {
         const photoData = await this.camera.takePictureAsync();
         this.setState({ capturing: false /*, captures: [photoData, ...this.state.captures]*/})
         updatePic( id2 , photoData)
-        this.props.TakingPic()
     };
     handleLongCapture = async () => {
         const videoData = await this.camera.recordAsync();
@@ -113,8 +112,8 @@ export default class CameraPage extends React.Component {
                         ref ={camera => {this.camera = camera}}
                     /> 
                 </View>
-                <TouchableOpacity onPress = {() => {captures.length > 0 && this.setState({ galleryOn : true })}} >
-                <Text style={styles.togallary}> 앨범으로 가기 </Text>
+                <TouchableOpacity onPress = {() => {this.props.TakingPic()}} >
+                <Text style={styles.togallary}> 책장으로 돌아가기 </Text>
                 </TouchableOpacity>                
                 
                 <Toolbar 

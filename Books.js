@@ -50,7 +50,7 @@ export default class Book extends React.Component{
         const {navigation} = this.props.navigation;
         const {isEditing, bookValue, isTakingPic } = this.state;
         const { text, id ,deleteBook,isCompleted , gal_captures} = this.props;
-        console.log(this.props.book.captures)
+        console.log(width, height)
         return(
             <View>
                 {!isTakingPic ? (

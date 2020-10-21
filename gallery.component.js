@@ -7,6 +7,13 @@ import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
 export default class Gallery extends Component{
+    static navigationOptions = ({navigation}) => {
+        return {
+            headerTitle: null,
+            headerTransparent: true
+            
+        }
+    }
     render(){
     const { navigation } = this.props;
     const captures = navigation.getParam("passed_captures")
