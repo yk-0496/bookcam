@@ -7,11 +7,11 @@ import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
 export default class Gallery extends Component{
+    
     static navigationOptions = ({navigation}) => {
         return {
             headerTitle: null,
             headerTransparent: true
-            
         }
     }
     render(){
@@ -19,11 +19,13 @@ export default class Gallery extends Component{
     const captures = navigation.getParam("passed_captures")
     console.log(captures)
     return(
-    <ScrollView
+        <ScrollView
         horizontal={true}
         style={ styles.galleryContainer}
         >
-            {captures.map(({ uri }) => (
+            {captures
+            .reverse()
+            .map(({ uri }) => (
                 <View style={styles.galleryImageContainer} key={uri}>
                     <Image source={{ uri }} style={styles.galleryImage} />
                 </View>

@@ -1,6 +1,8 @@
-import React from 'react';
-import { View , Text, Modal, ScrollView, TouchableOpacity, Button } from 'react-native';
+import React, {Component} from 'react';
+import { View , Text, Modal, ScrollView, TouchableOpacity, Button,Image } from 'react-native';
+import {CameraRoll} from '@react-native-community/cameraroll';
 import { Camera } from 'expo-camera';
+//import {RNCamera} from 'react-native-camera';
 import * as Permissions from 'expo-permissions';
 import PropTypes from "prop-types";
 
@@ -16,11 +18,12 @@ import {createStackNavigator} from 'react-navigation-stack';
 
 import Book from './Books';
 
+import { ViewShot  } from "react-native-view-shot"
+//import  {usePrevent}
 
 export default class CameraPage extends React.Component {
 
-
-    camera = null;
+  camera = null;
 
 
   /*  static propTypes = {
@@ -66,11 +69,14 @@ export default class CameraPage extends React.Component {
     
     
     async componentDidMount() {
+
+        
         const camera = await Permissions.askAsync(Permissions.CAMERA);
         const audio = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
         const hasCameraPermission = (camera.status === 'granted' && audio.status == 'granted');
         
         this.setState({ hasCameraPermission });
+        
 
     };
     
@@ -88,9 +94,15 @@ export default class CameraPage extends React.Component {
     }
 
     render() {
+      /*
+        return(
+            <ViewShot ref="viewShot" options={{ format:"jpg", quality: 0.9}}>
+                <Text> ...Somethig to rasterize...</Text>
+            </ViewShot>
+        );*/
     
         const { hasCameraPermission , flashMode, cameraType, capturing, captures, showShelvesPopup, isTakingPic, galleryOn } = this.state;
-        const { id } = this.props;
+       // const { id } = this.props;
         //const { Books } = this.props;
         
         if (hasCameraPermission === null) {
@@ -99,7 +111,7 @@ export default class CameraPage extends React.Component {
             return <Text> Access to camera has been denied</Text>;
 
         }
-        console.log(id)
+       // console.log(id)
 
         return (
 
@@ -128,15 +140,46 @@ export default class CameraPage extends React.Component {
                 onShortCapture={this.handleShortCapture}
                 />
                 
-                { galleryOn && 
-                <Gallery captures={captures}/>}
-
 
             </React.Fragment>
         );
-    };
+};
 
 };
+
+
+/*
+class ExampleWaitingCapture extends Component {
+    onImageLoad = () => {
+      this.refs.viewShot.capture().then(uri => {
+        console.log("do something with ", uri);
+      })
+    };
+    render() {
+      return (
+        <ViewShot ref="viewShot">
+          <Text>...Something to rasterize...</Text>
+          <Image onLoad={this.onImageLoad} />
+        </ViewShot>
+      );
+    }
+  }
+
+
+  class ExampleCaptureScrollViewContent extends Component {
+    onCapture = uri => {
+      console.log("do something with ", uri);
+    }
+    render() {
+      return (
+        <ScrollView>
+          <ViewShot onCapture={this.onCapture} captureMode="mount">
+            <Text>...The Scroll View Content Goes Here...</Text>
+          </ViewShot>
+        </ScrollView>
+      );
+    }
+  }*/
 
 
 

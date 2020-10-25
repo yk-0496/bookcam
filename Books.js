@@ -37,8 +37,11 @@ export default class Book extends React.Component{
         deleteBook : PropTypes.func.isRequired,
         updateBook : PropTypes.func.isRequired,
         gal_captures : PropTypes.array.isRequired,
+        completeReading : PropTypes.func.isRequired,
+
     
     }
+    
     
     _TakingPic =() => {
         this.setState({isTakingPic:false})
@@ -49,8 +52,8 @@ export default class Book extends React.Component{
     render(){
         const {navigation} = this.props.navigation;
         const {isEditing, bookValue, isTakingPic } = this.state;
-        const { text, id ,deleteBook,isCompleted , gal_captures} = this.props;
-        console.log(width, height)
+        const { text, id ,deleteBook,isCompleted , gal_captures, } = this.props;
+        console.log(this.props.book)
         return(
             <View>
                 {!isTakingPic ? (
@@ -66,8 +69,11 @@ export default class Book extends React.Component{
                             <Text> XXXX </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.setState({ isTakingPic : true})} >
+                    <TouchableOpacity onPress={() => this.setState({ isTakingPic : true })} >
                         <Text> Camera </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.props.completeReading(id)} >
+                        <Text> 다읽음 </Text>
                     </TouchableOpacity>
                     </View>
                     </View>
@@ -79,7 +85,8 @@ export default class Book extends React.Component{
                         updatePic={this.props.updatePic}
                         id2={this.props.id} />
                         </Modal>)}
-                
+
+   
             </View>
 
         )

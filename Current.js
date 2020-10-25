@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, TextInput,event, Button, AsyncStorage, createdAt} from "react-native";
+import {View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, Image, TextInput,event, Button, AsyncStorage, createdAt} from "react-native";
 import { AppLoading } from "expo";
 
 import PropTypes from "prop-types";
@@ -28,12 +28,14 @@ export default class Current extends React.Component {
         newBook: "",
         loadedBooks : false,
         Books: {},
-        isEditing: false
+        compBooks: {},
+        isEditing: false,
      };
      
 
     componentDidMount = () => {
         this._loadBooks();
+        this._loadcompBook();
         
     };
 
@@ -43,7 +45,7 @@ export default class Current extends React.Component {
       }*/
 
       render() {
-            const { Books, newBook , isEditing, loadedBooks } = this.state;
+            const { Books, newBook , isEditing, loadedBooks, compBooks } = this.state;
             //const {text} = this.props
             //const { isEditing } = this.props;
             //console.log(text)
@@ -57,6 +59,7 @@ export default class Current extends React.Component {
                     <Text style={styles.shelveTitle}>
                         책장 이름
                     </Text>
+
                     <View style={styles.shelves}>
                     <TouchableOpacity onPress={() => this.setState({isEditing: true})} >
                         <Text style={styles.addBook}>책 추가하기</Text>
@@ -86,15 +89,18 @@ export default class Current extends React.Component {
                             updatePic = {this._updatePic}
                             navigation = {this.props.navigation}
                             book = {book}
+                            completeReading = {this._completeReading}
                             {...book}
                             />                            
                         ))}
                         
                     </ScrollView>
+
+             
                     </View>
                     <Button 
                     title = ' 전에 읽은 책으로 '
-                    onPress = {() => this.props.navigation.navigate('Previous')}/>
+                    onPress = {() => this.props.navigation.navigate('Previous', { passed_prevBooks : compBooks })} />
                 </View>
             )
 
@@ -129,11 +135,22 @@ export default class Current extends React.Component {
             //console.log({Books})
             //console.log(Object.values(parsedBooks))
            // console.log(typeof Books, typeof parsedBooks)
-           //console.log("Book"+Books)
+           console.log("Book"+Books)
 
 
         } catch(err) {
             console.log(err)
+        }
+    };
+
+    _loadcompBook = async () => {
+        try{
+            const compBooks = await AsyncStorage.getItem("compBooks");
+            const parsedcompBooks = JSON.parse(compBooks);
+            this.setState({ loadedcompBooks : true, compBooks : parsedcompBooks || {} });
+            console.log("completedBook" + compBooks)
+        } catch(e) {
+            console.log(e)
         }
     };
 
@@ -147,7 +164,8 @@ export default class Current extends React.Component {
                         id: ID,
                         text: newBook,
                         createdAt : Date.now(),
-                        captures : [ ],
+                        captures : [],
+                        readingState : true ,
                     }
                 };
                 //console.log(newBookObject.id)
@@ -194,22 +212,73 @@ export default class Current extends React.Component {
             return {...newState}
         });
     }
-    _completeBook = (id) => {
+
+    _completeReading = (id) => {
         this.setState(prevState => {
+            const newcompBooks = {
+                [id] : prevState.Books[id] }
+            const newState ={
+                ...prevState,
+                newcompBooks: "",
+                compBooks: {
+                    ...prevState.compBooks,
+                    ...newcompBooks,
+                }
+            };
+
+            this._moveBooks(newState.compBooks);
+            
+            this._deleteBook(id);
+            return { ...newState};
+        }
+        )};
+            /*
+
             const newState = {
                 ...prevState,
                 Books: {
                     ...prevState.Books,
                 [id]: {
-                    ...prevStete.Books[id],
-                    isCompleted: true
+                    ...prevState.Books[id],
+                    readingState: false,
                 }
+                };
+            
+            //const tempcompBooks = newState.Books[id]
+            const compBooks = {
+                ...compBooks,
+                newState.Books[id]};
+            this._moveBooks(compBooks);
+            this._deleteBook(id);
+        };
+        })*/
+
+       /* this.setState(prevcompBooks =>{
+            const newcompBooks ={
+                ...prevcompBooks,
+                compBooks:{
+                    ...prevcompBooks.compBooks,
+                    ...newState.Books[id]
                 }
-            };
-            this._saveBooks(newState.Books);
-            return { ...newState};
-        })
-    };
+            }
+        })*/
+       // this.setState(prevState => {
+         //   const newState ={
+           //     ...prevState,
+             //   compBooks: {
+               //     ...prevState.compBooks,
+                 //   newcompBooks
+               // }
+           // }
+        //this._moveBooks(newcompBooks);
+        //})
+        
+          //  this._moveBooks(newcompBooks);
+            //this._deleteBook(id);
+            //return { ...newState};
+       
+
+
     _updateBooks = (id,text) => {
         this.setState(prevState => {
             const newState = {
@@ -247,6 +316,9 @@ export default class Current extends React.Component {
         const saveBooks = AsyncStorage.setItem("Books", JSON.stringify(newBooks));
         //console.log(JSON.stringify(newBooks))
         //console.log(Books)
+    }
+    _moveBooks = movBooks => {
+        const savecompBooks = AsyncStorage.setItem("compBooks", JSON.stringify(movBooks));
     }
 
 }
