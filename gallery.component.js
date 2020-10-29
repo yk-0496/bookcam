@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Image, ScrollView } from 'react-native';
+import { View, Image, Text, ScrollView,TouchableOpacity } from 'react-native';
 import PropTypes from "prop-types";
 import styles from './styles';
 
@@ -17,7 +17,9 @@ export default class Gallery extends Component{
     render(){
     const { navigation } = this.props;
     const captures = navigation.getParam("passed_captures")
-    console.log(captures)
+    const id = navigation.getParam("id")
+    const { params } = this.props.navigation.state; 
+    console.log(id)
     return(
         <ScrollView
         horizontal={true}
@@ -25,11 +27,24 @@ export default class Gallery extends Component{
         >
             {captures
             .reverse()
-            .map(({ uri }) => (
+            .map(({ uri }, index ) => (
                 <View style={styles.galleryImageContainer} key={uri}>
+                    <TouchableOpacity onPress={() => params.deleteCapture(id,index)}>
+                        <Text style={styles.shelveTitle}> {index}
+                        </Text>
+                    </TouchableOpacity>
                     <Image source={{ uri }} style={styles.galleryImage} />
+
+                    
+                   
                 </View>
             ))}
         </ScrollView>
     )
-}};
+
+
+}
+
+
+
+};

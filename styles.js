@@ -179,6 +179,13 @@ export default StyleSheet.create({
     togallary: {
         fontSize: 20,
         marginTop:20
+    },
+    completedText: {
+        color : "black"
+    },
+    readingText: {
+
+        color : "grey"
     }
     
 });

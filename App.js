@@ -9,6 +9,7 @@ import Current from "./Current"
 import CameraPage from './camera.page';
 import Book from './Books';
 import Gallery from './gallery.component';
+import PrevBook from './PrevBook'
 
 class Application extends React.Component {
   render() {
@@ -26,6 +27,7 @@ const AppNavigator = createStackNavigator(
   Book: Book,
   Gallery : Gallery,
   Previous: PrevBookList,
+  PrevBook : PrevBook,
 
   },
   {

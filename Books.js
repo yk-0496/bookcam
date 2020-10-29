@@ -38,8 +38,6 @@ export default class Book extends React.Component{
         updateBook : PropTypes.func.isRequired,
         gal_captures : PropTypes.array.isRequired,
         completeReading : PropTypes.func.isRequired,
-
-    
     }
     
     
@@ -52,14 +50,14 @@ export default class Book extends React.Component{
     render(){
         const {navigation} = this.props.navigation;
         const {isEditing, bookValue, isTakingPic } = this.state;
-        const { text, id ,deleteBook,isCompleted , gal_captures, } = this.props;
+        const { text, id ,deleteBook,isCompleted , gal_captures, deleteCapture} = this.props;
         console.log(this.props.book)
         return(
             <View>
                 {!isTakingPic ? (
                 <View style={styles.container}>
                 <View style={styles.column}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Gallery', { passed_captures : this.props.book.captures })}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Gallery', { id : this.props.id , passed_captures : this.props.book.captures , 'deleteCapture' : this.props.deleteCapture.bind(this) })}>
                     <Text> {text} </Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPressOut ={(event)=> {

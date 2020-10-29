@@ -25,19 +25,32 @@ export default class PrevBookList extends Component{
         }
     }
     render() {
-        //const {navigation} = this.props.navigation;
+        const {navigation} = this.props.navigation;
         const prevBooks = this.props.navigation.getParam("passed_prevBooks")
-        console.log(prevBooks)
+        const { params } = this.props.navigation.state;
+        //const turntocurrent = this.props.navigation.getParam("turntocurrent")
+        //console.log(prevBooks)
+        //console.log(typeof turntocurrent)
         return(
             <View style={styles.shelveContainer}>
                 <Text style= {styles.shelveTitle}>
-                    완독 !! 
+                    완독 !! ß
                 </Text>
                 <View style={styles.shelves}>
 
                 <ScrollView>
-                     
-                    </ScrollView>
+                    {Object.values(prevBooks)
+                    .map(prevbook => (
+                        <PrevBook
+                        key = {prevbook.id}
+                        prevbook = {prevbook}
+                        navigation = {this.props.navigation}
+                        turntocurrent = {params.turntocurrent}
+                        deletecompBooks = {params.deletecompBooks}
+                        {...prevbook}
+                        />
+                    ))}     
+                </ScrollView>
 
              
                 

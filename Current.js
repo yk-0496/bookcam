@@ -61,7 +61,7 @@ export default class Current extends React.Component {
                     </Text>
 
                     <View style={styles.shelves}>
-                    <TouchableOpacity onPress={() => this.setState({isEditing: true})} >
+                    <TouchableOpacity onPress={() => this.setState({ isEditing: true })} >
                         <Text style={styles.addBook}>책 추가하기</Text>
                     </TouchableOpacity>
                     { isEditing && <Modal transparent={true} visible ={true}>
@@ -75,7 +75,11 @@ export default class Current extends React.Component {
                         placeholderTextColor= {"#999"}
                         autoCorrect={false}
                         onSubmitEditing={this._addNewBook}/>
+                        <TouchableOpacity onPress={() => this.setState({ isEditing : false })}> 
+                            <Text>추가 안함</Text> 
+                        </TouchableOpacity>
                         </View>
+
                         </Modal> }
                     <ScrollView>
                         {Object.values(Books)
@@ -90,6 +94,7 @@ export default class Current extends React.Component {
                             navigation = {this.props.navigation}
                             book = {book}
                             completeReading = {this._completeReading}
+                            deleteCapture ={this._deleteCapture}
                             {...book}
                             />                            
                         ))}
@@ -100,7 +105,9 @@ export default class Current extends React.Component {
                     </View>
                     <Button 
                     title = ' 전에 읽은 책으로 '
-                    onPress = {() => this.props.navigation.navigate('Previous', { passed_prevBooks : compBooks })} />
+                    onPress = {() => 
+                    this.props.navigation.navigate('Previous', { passed_prevBooks : compBooks, 'turntocurrent' : this._turntocurrent.bind(this), 'deletecompBooks': this._deletecompBooks.bind(this)})
+                    } />
                 </View>
             )
 
@@ -125,6 +132,8 @@ export default class Current extends React.Component {
         });
     };
 
+    
+
     _loadBooks = async () => {
         try {
             const Books = await AsyncStorage.getItem("Books");
@@ -136,6 +145,7 @@ export default class Current extends React.Component {
             //console.log(Object.values(parsedBooks))
            // console.log(typeof Books, typeof parsedBooks)
            console.log("Book"+Books)
+           
 
 
         } catch(err) {
@@ -149,6 +159,7 @@ export default class Current extends React.Component {
             const parsedcompBooks = JSON.parse(compBooks);
             this.setState({ loadedcompBooks : true, compBooks : parsedcompBooks || {} });
             console.log("completedBook" + compBooks)
+            
         } catch(e) {
             console.log(e)
         }
@@ -213,6 +224,22 @@ export default class Current extends React.Component {
         });
     }
 
+
+
+    _deletecompBooks = () => {
+        this.setState(prevState => {
+            const compBooks = prevState.compBooks;
+            delete compBooks[id];
+            const newState = {
+                ...prevState,
+                ...compBooks
+            };
+            this._savecompBooks(newState.compBooks)
+            return {...newState}
+        });
+    }
+
+
     _completeReading = (id) => {
         this.setState(prevState => {
             const newcompBooks = {
@@ -226,12 +253,31 @@ export default class Current extends React.Component {
                 }
             };
 
-            this._moveBooks(newState.compBooks);
-            
+            this._savecompBooks(newState.compBooks);
             this._deleteBook(id);
             return { ...newState};
         }
         )};
+
+    _turntocurrent = (id) => {
+        this.setState(prevState => {
+            const turnBook = {
+                [id] :  prevState.compBooks[id] }
+            const newState ={
+                ...prevState,
+                turnBook: "",
+                Books: {
+                    ...prevState.Books,
+                    ...turnBook,
+                }
+            };
+            this._saveBooks(newState.Books);
+            this._deletecompBooks(id)
+            return { ...newState}
+            }
+        )
+
+}
             /*
 
             const newState = {
@@ -312,15 +358,37 @@ export default class Current extends React.Component {
         })
     }
 
+    _deleteCapture = (id, index) => {
+        this.setState(prevState => {
+            //console.log("newcaptrie: :", prevState.Books[id].captures)
+            //console.log("~~~~~~~~~~~~~~",prevState.Books[id].captures)
+            console.log("~~~~~~~~~~~~~~",prevState.Books[id].captures.splice(index, 1))
+            prevState.Books[id].captures.splice(index, 1)
+            //const index = prevState.Books[id].captures.uri.indexOf(uri);
+            //console.log(prevState.Books[id].captures)
+            //console.log("newcaptrie: :", newcaptures)
+            const newState ={
+                Books : { 
+                    ...prevState.Books,
+                [id]: {
+                    ...prevState.Books[id],
+                    captures : [...prevState.Books[id].captures]
+                }
+                }
+            };
+            this._saveBooks(newState.Books);
+            return {...newState};
+        })
+    }
+
     _saveBooks = newBooks => {
         const saveBooks = AsyncStorage.setItem("Books", JSON.stringify(newBooks));
         //console.log(JSON.stringify(newBooks))
         //console.log(Books)
     }
-    _moveBooks = movBooks => {
-        const savecompBooks = AsyncStorage.setItem("compBooks", JSON.stringify(movBooks));
+    _savecompBooks = completedBooks => {
+        const savecompBooks = AsyncStorage.setItem("compBooks", JSON.stringify(completedBooks));
     }
-
 }
 
 

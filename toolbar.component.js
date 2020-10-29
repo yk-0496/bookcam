@@ -3,6 +3,7 @@ import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { Col, Row, Grid } from "react-native-easy-grid"
 import { View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import ViewShot from "react-native-view-shot";
 
 import styles from './styles';
 
@@ -14,6 +15,7 @@ export default({
     flashMode = CameraFlashModes.off,
     setFlashMode, setCameraType,
     onCaptureIn, onCaptureOut, onLongCapture, onShortCapture,
+    
 
 }) => (
     
