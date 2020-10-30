@@ -93,6 +93,7 @@ export default class Current extends React.Component {
                             updatePic = {this._updatePic}
                             navigation = {this.props.navigation}
                             book = {book}
+                            title ={book.text}
                             completeReading = {this._completeReading}
                             deleteCapture ={this._deleteCapture}
                             {...book}
@@ -131,7 +132,6 @@ export default class Current extends React.Component {
             newBook: text,
         });
     };
-
     
 
     _loadBooks = async () => {
@@ -176,7 +176,7 @@ export default class Current extends React.Component {
                         text: newBook,
                         createdAt : Date.now(),
                         captures : [],
-                        readingState : true ,
+                        numPic : 0
                     }
                 };
                 //console.log(newBookObject.id)
@@ -203,7 +203,7 @@ export default class Current extends React.Component {
                     ...prevState.Books,
                 [id] : {
                     ...prevState.Books[id],
-                    isCompleted: false
+                    //isCompleted: false
                 }
             }
         }
@@ -226,7 +226,7 @@ export default class Current extends React.Component {
 
 
 
-    _deletecompBooks = () => {
+    _deletecompBooks = (id) => {
         this.setState(prevState => {
             const compBooks = prevState.compBooks;
             delete compBooks[id];
@@ -343,44 +343,81 @@ export default class Current extends React.Component {
     };
     _updatePic = (id,photoData) => {
         this.setState(prevState => {
+            const i = prevState.Books[id].numPic
+            photoData["index"] = i
             const newState = {
                 Books : {
                     ...prevState.Books,
                 [id]: {
                     ...prevState.Books[id],
-                    captures : [photoData, ...prevState.Books[id].captures]
-                
+                    captures : [photoData, ...prevState.Books[id].captures],
+                    numPic : prevState.Books[id].numPic+1
                 }
                 }
             };
+            newState.Books[id].captures.sort((a,b) => a.index - b.index )
             this._saveBooks(newState.Books);
             return {...newState};
         })
-    }
+    };
 
     _deleteCapture = (id, index) => {
         this.setState(prevState => {
-            //console.log("newcaptrie: :", prevState.Books[id].captures)
-            //console.log("~~~~~~~~~~~~~~",prevState.Books[id].captures)
-            console.log("~~~~~~~~~~~~~~",prevState.Books[id].captures.splice(index, 1))
-            prevState.Books[id].captures.splice(index, 1)
-            //const index = prevState.Books[id].captures.uri.indexOf(uri);
-            //console.log(prevState.Books[id].captures)
-            //console.log("newcaptrie: :", newcaptures)
+            const arrLength = prevState.Books[id].numPic
+            //const targetIndex = arrLength-index-1
+            console.log("$$$$$$$$$$arrLenght",arrLength)
+            const targetIndex = index
+            console.log("@@@전@@@@",prevState.Books[id].captures)
+            prevState.Books[id].captures.splice(targetIndex, 1)
+            console.log("@@@후@@@@",prevState.Books[id].captures)
             const newState ={
                 Books : { 
                     ...prevState.Books,
                 [id]: {
                     ...prevState.Books[id],
-                    captures : [...prevState.Books[id].captures]
+                    captures : [...prevState.Books[id].captures],
+                    numPic : prevState.Books[id].numPic-1
                 }
                 }
             };
             this._saveBooks(newState.Books);
+            this._rearrangeIndex(id, targetIndex);
             return {...newState};
         })
     }
-
+    
+    _rearrangeIndex = (id, targetIndex) => {
+        this.setState(prevState => {
+            const numberPic = prevState.Books[id].numPic;
+            let newIndexArray = [];
+            for (var i=0; i < numberPic ; i++) {
+                const current = prevState.Books[id].captures[i];
+                const currentIndex = current.index;
+                if (targetIndex < currentIndex) {
+                    current.index = currentIndex-1
+                    newIndexArray = [current, ...newIndexArray]
+                        } else {
+                            current.index = currentIndex
+                            newIndexArray = [current, ...newIndexArray]
+                        }
+                    };
+                newIndexArray.sort((a,b) => a.index - b.index)
+                const newState={
+                    Books: {
+                        ...prevState.Books,
+                    [id]:{
+                        ...prevState.Books[id],
+                    captures : newIndexArray
+                        }
+                    }
+                };
+            this._saveBooks(newState.Books);
+            return {...newState};
+                    
+            })
+            
+        }
+    
     _saveBooks = newBooks => {
         const saveBooks = AsyncStorage.setItem("Books", JSON.stringify(newBooks));
         //console.log(JSON.stringify(newBooks))

@@ -60,7 +60,7 @@ export default class CameraPage extends React.Component {
         const { updatePic, id2 } = this.props;
         const photoData = await this.camera.takePictureAsync();
         this.setState({ capturing: false /*, captures: [photoData, ...this.state.captures]*/})
-
+        //console.log( "!!!!!!!!!!!!!!photoData ::", photoData.uri)
         updatePic( id2 , photoData );
     };
     handleLongCapture = async () => {

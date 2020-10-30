@@ -47,7 +47,16 @@ export default StyleSheet.create({
         width: winWidth,
         height: winHeight,
         //bottom: 100,
-        backgroundColor:"#bbb"
+        backgroundColor:"#FFFFFF"
+    },
+    galleryTitle: {
+        borderTopWidth: 1,
+        marginTop:65,
+        width: winWidth,
+        height:55,
+        backgroundColor:"#FFFFFF",
+        alignItems: 'center',
+        paddingTop:20
     },
     galleryImageContainer: {
         width: winWidth,
@@ -55,8 +64,8 @@ export default StyleSheet.create({
        // marginRight: 5
     },
     galleryImage: {
-        width:winWidth-50,
-        height:winHeight,
+        width:winWidth,
+        height:winHeight-250,
     },
     popupContainer: {
         //backgroundColor: "rgb(225, 197, 47)",
