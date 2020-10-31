@@ -9,12 +9,36 @@ import CameraPage from './camera.page';
 import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import Book from "./Books";
+import { AntDesign } from '@expo/vector-icons';
+import SearchedBooks from './SearchedBooks'
 
 
 import uuid from 'react-native-uuid';
 //import { v1 as uuidv1 } from 'uuid';
 
-const { width, height} = Dimensions.get("window")
+const { width, height} = Dimensions.get("window");
+
+/*
+const bookSearchHttpHandler = async() => {
+    const params = {
+        query : '미움받을 용기',
+        page : '1', 
+        size : 10, 
+        sort : 'sim', 
+        target : ''
+    };
+    const {data} = await searchBook(params);
+    console.log({data})
+    console.log(1)
+}
+
+const bookhandler = async() =>{
+    const {data} = await SearchBook();
+    console.log(data)
+};*/
+const query = "미움받을 용기"
+
+
 
 export default class Current extends React.Component {     
     static navigationOptions = ({navigation}) => {
@@ -30,14 +54,47 @@ export default class Current extends React.Component {
         Books: {},
         compBooks: {},
         isEditing: false,
+        thumbnail: "",
+        booktitle:"",
+        author:"",
+        newBooktitle:"",
+        searchedBooks:{},
+        isSearched: false,
+        searchedBooksDocu : []
      };
      
 
     componentDidMount = () => {
         this._loadBooks();
         this._loadcompBook();
+
         
     };
+    
+    _getBook = (newBook) => {
+        const {newBooktitle} = this.state;
+        if (newBooktitle !== "") {
+        fetch("https://dapi.kakao.com/v3/search/book?query="+newBooktitle , {
+            method : 'POST',
+            headers: {
+                'Content-Type' : 'application/json; charset=utf-8',
+                'Authorization' : 'KakaoAK 828821f9525130482a8f20442fd569fb',
+            },
+        })
+        .then(response => response.json())
+        .then(json => {
+          //  console.log(json);
+            this.setState({
+                searchedBooks : json,
+                searchedBooksDocu : json.documents,
+                thumbnail:json.documents[1].thumbnail,
+                booktitle:json.documents[1].title,
+                author:json.documents[1].authors,
+                newBook :json.documents[1].title ,
+            })
+        })}
+        this.setState({ isSearched:true })
+    }
 
 
     /*static propTypes = {
@@ -45,39 +102,65 @@ export default class Current extends React.Component {
       }*/
 
       render() {
-            const { Books, newBook , isEditing, loadedBooks, compBooks } = this.state;
+            const { Books, newBook , isEditing, loadedBooks, compBooks,thumbnail, booktitle, author,newBooktitle, searchedBooks, isSearched, searchedBooksDocu } = this.state;
             //const {text} = this.props
             //const { isEditing } = this.props;
             //console.log(text)
            // if (!loadedBooks) {
              //   return <Apploading />;
             //}
-
+            //console.log(searchedBooks.documents)
+            //console.log(typeof (searchedBooks.documents))
             return(
 
                 <View style={styles.shelveContainer}>
                     <Text style={styles.shelveTitle}>
                         책장 이름
                     </Text>
-
                     <View style={styles.shelves}>
-                    <TouchableOpacity onPress={() => this.setState({ isEditing: true })} >
-                        <Text style={styles.addBook}>책 추가하기</Text>
+                    <TouchableOpacity onPress={() => this.setState({isEditing:true})} >
+                        <AntDesign name="plussquareo" size={24} color="black"/>
                     </TouchableOpacity>
                     { isEditing && <Modal transparent={true} visible ={true}>
                         <View style={styles.listEditing}>
                         <TextInput
                         //style={styles.inputList}
                         placeholder={"추가할 책 이름을 입력해주세요"}
-                        value = {newBook}
+                        value = {newBooktitle}
                         onChangeText = {this._controlNewBook}
                         returnKeyType={"done"}
                         placeholderTextColor= {"#999"}
                         autoCorrect={false}
-                        onSubmitEditing={this._addNewBook}/>
+                        onSubmitEditing={this._getBook}/>
                         <TouchableOpacity onPress={() => this.setState({ isEditing : false })}> 
                             <Text>추가 안함</Text> 
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={() => this._addNewBook(newBook)}> 
+                            <Text>추가 하시겠습니까???????</Text> 
+                        </TouchableOpacity>
+
+                        { isSearched && 
+                        <View>
+                            <ScrollView>
+                            {searchedBooksDocu.map(searchedbook => {
+                                {console.log(searchedbook.title)}
+                                {console.log("한번끝")}
+                                return(
+                                <SearchedBooks
+                                author = {searchedbook.authors}
+                                title = {searchedbook.title}
+                                thumbnailuri = {searchedbook.thumbnail}
+                                isSearched = {isSearched}
+                                addNewBook = {this._addNewBook}
+                                {...searchedbook}
+                                />    )
+                            })}
+                            </ScrollView>
+                        </View>
+                    }
+
+
+
                         </View>
 
                         </Modal> }
@@ -96,6 +179,7 @@ export default class Current extends React.Component {
                             title ={book.text}
                             completeReading = {this._completeReading}
                             deleteCapture ={this._deleteCapture}
+                            thumbnail = {book.thumbnailPic}
                             {...book}
                             />                            
                         ))}
@@ -129,7 +213,7 @@ export default class Current extends React.Component {
 
     _controlNewBook = text => {
         this.setState({
-            newBook: text,
+            newBooktitle: text,
         });
     };
     
@@ -158,15 +242,15 @@ export default class Current extends React.Component {
             const compBooks = await AsyncStorage.getItem("compBooks");
             const parsedcompBooks = JSON.parse(compBooks);
             this.setState({ loadedcompBooks : true, compBooks : parsedcompBooks || {} });
-            console.log("completedBook" + compBooks)
+            //console.log("completedBook" + compBooks)
             
         } catch(e) {
             console.log(e)
         }
     };
 
-    _addNewBook = () => {
-        const {newBook} = this.state;
+    _addNewBook = (newBook, thumbn ) => {
+       // const {newBook} = this.state;
         if (newBook !== "") {
             this.setState(prevState => {
                 const ID = uuid.v1();
@@ -176,7 +260,8 @@ export default class Current extends React.Component {
                         text: newBook,
                         createdAt : Date.now(),
                         captures : [],
-                        numPic : 0
+                        numPic : 0,
+                        thumbnailPic : thumbn
                     }
                 };
                 //console.log(newBookObject.id)
@@ -365,11 +450,11 @@ export default class Current extends React.Component {
         this.setState(prevState => {
             const arrLength = prevState.Books[id].numPic
             //const targetIndex = arrLength-index-1
-            console.log("$$$$$$$$$$arrLenght",arrLength)
+            //console.log("$$$$$$$$$$arrLenght",arrLength)
             const targetIndex = index
-            console.log("@@@전@@@@",prevState.Books[id].captures)
+            //console.log("@@@전@@@@",prevState.Books[id].captures)
             prevState.Books[id].captures.splice(targetIndex, 1)
-            console.log("@@@후@@@@",prevState.Books[id].captures)
+            //console.log("@@@후@@@@",prevState.Books[id].captures)
             const newState ={
                 Books : { 
                     ...prevState.Books,

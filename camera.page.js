@@ -117,6 +117,7 @@ export default class CameraPage extends React.Component {
         return (
 
             <React.Fragment>
+                <View style={styles.shelveTitle}/>
                 <View>
                     <Camera 
                         type={cameraType}
@@ -127,7 +128,8 @@ export default class CameraPage extends React.Component {
                 </View>
                 <TouchableOpacity onPress = {() => {this.props.TakingPic()}} >
                 <Text style={styles.togallary}> 책장으로 돌아가기 </Text>
-                </TouchableOpacity>                
+                </TouchableOpacity>    
+                <View style={styles.shelveBottom}>          
                 
                 <Toolbar
                 capturing={capturing}
@@ -140,7 +142,7 @@ export default class CameraPage extends React.Component {
                 onLongCapture={this.handleLongCapture}
                 onShortCapture={this.handleShortCapture}
                 />
-                
+                </View>  
 
             </React.Fragment>
         );

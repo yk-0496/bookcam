@@ -27,6 +27,8 @@ export default class PrevBook extends React.Component{
             isReading : false
         }
 
+
+
         static propTypes = {
             text: PropTypes.string.isRequired,
             id : PropTypes.string.isRequired,

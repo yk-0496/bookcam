@@ -11,7 +11,7 @@ export default class Gallery extends Component{
     static navigationOptions = ({navigation}) => {
         return {
             headerTitle: null,
-            //headerTransparent: true,
+            headerTransparent: true,
             
 
     }}
@@ -35,11 +35,13 @@ export default class Gallery extends Component{
                 <View style={styles.galleryImageContainer} key={capture.uri} >
                     <View style={styles.galleryTitle}>
                         <Text> {booktitle} </Text>
-                    </View>
-                    <TouchableOpacity onPress={() => params.deleteCapture(id,capture.index)}>
+                        <TouchableOpacity onPress={() => params.deleteCapture(id,capture.index)}>
                         <Text> 삭제 </Text>
                     </TouchableOpacity> 
+                    </View>
+
                     <Image source={{uri: capture.uri }} style={styles.galleryImage} />
+                    <View style={styles.bottomGallery}/>
                     
                     
                    

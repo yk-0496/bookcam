@@ -24,6 +24,13 @@ export default StyleSheet.create({
         height: 100,
         bottom: 0,
     },
+    bottomGallery: {
+        width: winWidth,
+        position: 'absolute',
+        height: 100,
+        bottom: 0,
+        backgroundColor: "#FFFFFF"
+    },
     captureBtn: {
         width: 60,
         height: 60,
@@ -46,7 +53,7 @@ export default StyleSheet.create({
     galleryContainer: {
         width: winWidth,
         height: winHeight,
-        //bottom: 100,
+        //bottom: 100,z
         backgroundColor:"#FFFFFF"
     },
     galleryTitle: {
@@ -65,7 +72,13 @@ export default StyleSheet.create({
     },
     galleryImage: {
         width:winWidth,
-        height:winHeight-250,
+        height:winHeight,
+    },
+    thumbnailImage: {
+        width:winWidth-250,
+        height:winHeight-500,
+        alignItems:'flex-end',
+        marginRight: 150
     },
     popupContainer: {
         //backgroundColor: "rgb(225, 197, 47)",
@@ -136,6 +149,11 @@ export default StyleSheet.create({
         fontWeight: "400",
         marginTop: 65,
     },
+    shelveBottom: {
+        backgroundColor: "#bbb",
+        bottom:0,
+        height:100,
+    },
     shelves: {
         backgroundColor: "#FFFFFF",
         marginTop:15,
@@ -195,6 +213,6 @@ export default StyleSheet.create({
     readingText: {
 
         color : "grey"
-    }
-    
+    },
+
 });

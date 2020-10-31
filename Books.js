@@ -1,6 +1,11 @@
 import React, {Component} from "react";
-import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput,event, Button, Modal, ShadowPropTypesIOS } from "react-native"
+import {View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, TextInput,event, Button, Modal, ShadowPropTypesIOS } from "react-native"
 import PropTypes from "prop-types";
+import { AntDesign } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons'; 
+
 //import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 //import styles from "./styles";
 //import styles from "../../bookcam/styles";
@@ -51,28 +56,35 @@ export default class Book extends React.Component{
         const {navigation} = this.props.navigation;
         const {isEditing, bookValue, isTakingPic } = this.state;
         const { text, id ,deleteBook, deleteCapture} = this.props;
-        console.log(this.props.book)
+
+
         return(
             <View>
                 {!isTakingPic ? (
                 <View style={styles.container}>
                 <View style={styles.column}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Gallery', { id : this.props.id , passed_captures : this.props.book.captures , 'deleteCapture' : this.props.deleteCapture.bind(this) , title : this.props.title})}>
-                    <Text> {text} </Text>
+                    <Image
+                    style={{ width: 100, height: 150 }}
+                    source={{ uri: this.props.thumbnail}}
+                    />
                     </TouchableOpacity>
+                    <View>
+                    <Text style={{marginLeft:20}}> {text} </Text>
+                    <View style={styles.iconcolumn}>
                     <TouchableOpacity onPressOut ={(event)=> {
                         event.stopPropagation;
                         deleteBook(id)}}>
-                        <View>
-                            <Text> XXXX </Text>
-                        </View>
+                            <Feather name="trash-2" size={24} color="black" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.setState({ isTakingPic : true })} >
-                        <Text> Camera </Text>
+                        <AntDesign name="camerao" size={24} color="black" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.props.completeReading(id)} >
-                        <Text> 다읽음 </Text>
+                        <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
                     </TouchableOpacity>
+                    </View>
+                    </View>
                     </View>
                     </View>
                     ): (
@@ -127,10 +139,18 @@ const styles = StyleSheet.create({
         
     },
     column: {
+        marginLeft: 40,
         flexDirection:"row",
         alignItems:"center",
         width: width /2,
-        height:40,
+        height: 180,
+    },
+    iconcolumn: {
+        marginLeft: 50,
+        flexDirection:"row",
+        alignItems:"center",
+        width: width /3,
+        height: 50,
     },
     circle: {
         width:30,
